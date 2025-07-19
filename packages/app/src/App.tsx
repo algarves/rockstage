@@ -35,6 +35,10 @@ import { AppRouter, FlatRoutes } from '@backstage/core-app-api';
 import { CatalogGraphPage } from '@backstage/plugin-catalog-graph';
 import { RequirePermission } from '@backstage/plugin-permission-react';
 import { catalogEntityCreatePermission } from '@backstage/plugin-catalog-common/alpha';
+import HomePage from './components/home/HomePage';
+import { HomepageCompositionRoot } from '@backstage/plugin-home'
+import { UnifiedThemeProvider } from '@backstage/theme';
+import { rockstageTheme } from './components/themes/rockstageTheme';
 
 const app = createApp({
   apis,
@@ -58,11 +62,23 @@ const app = createApp({
   components: {
     SignInPage: props => <SignInPage {...props} auto providers={['guest']} />,
   },
+  themes: [
+    {
+      id: 'rockstage-dark',
+      title: 'Rockstage Dark',
+      variant: 'dark',
+      Provider: ({children}) => (
+        <UnifiedThemeProvider theme={rockstageTheme} children={children} />
+      )
+    }
+  ]
 });
 
 const routes = (
   <FlatRoutes>
-    <Route path="/" element={<Navigate to="catalog" />} />
+    <Route path="/" element={<HomepageCompositionRoot />}>
+      <HomePage />
+    </Route>    
     <Route path="/catalog" element={<CatalogIndexPage />} />
     <Route
       path="/catalog/:namespace/:kind/:name"
